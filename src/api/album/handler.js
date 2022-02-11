@@ -32,17 +32,11 @@ class AlbumHandler {
     } catch (error) {
       console.log('error', error);
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        return helper.responseClientError(error, h);
       }
 
       // Server ERROR!
-      return helper.responseError(h);
+      return helper.responseServerError(h);
     }
   }
 
@@ -68,22 +62,11 @@ class AlbumHandler {
       };
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-        response.code(error.statusCode);
-        return response;
+        return helper.responseClientError(error, h);
       }
 
       // Server ERROR!
-      const response = h.response({
-        status: 'error',
-        message: 'Server Error',
-      });
-
-      response.code(500);
-      return response;
+      return helper.responseServerError(h);
     }
   }
 
@@ -101,24 +84,18 @@ class AlbumHandler {
       };
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        return helper.responseClientError(error, h);
       }
 
       // Server ERROR!
-      return helper.responseError(h);
+      return helper.responseServerError(h);
     }
   }
 
   async deleteAlbumHandler(request, h) {
     try {
       const { id } = request.params;
-
+      await this._service.getAlbumBydId(id);
       await this._service.deleteAlbumById(id);
 
       return {
@@ -127,24 +104,12 @@ class AlbumHandler {
       };
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-
-        response.code(error.statusCode);
-        return response;
+        return helper.responseClientError(error, h);
       }
     }
 
     // Server ERROR!
-    const response = h.response({
-      status: 'error',
-      message: 'Server Error',
-    });
-
-    response.code(500);
-    return response;
+    return helper.responseServerError(h);
   }
 }
 

@@ -31,7 +31,7 @@ const mapSongDBToModel = ({
   updatedAt: updated_at,
 });
 
-const responseError = (res) => {
+const responseServerError = (res) => {
   const response = res.response({
     status: 'error',
     message: 'Server Error',
@@ -41,4 +41,19 @@ const responseError = (res) => {
   return response;
 };
 
-module.exports = { mapAlbumDBToModel, mapSongDBToModel, responseError };
+const responseClientError = (error, res) => {
+  const response = res.response({
+    status: 'fail',
+    message: error.message,
+  });
+
+  response.code(error.statusCode);
+  return response;
+};
+
+module.exports = {
+  mapAlbumDBToModel,
+  mapSongDBToModel,
+  responseServerError,
+  responseClientError,
+};

@@ -4,14 +4,14 @@ const Hapi = require('@hapi/hapi');
 const AlbumApi = require('./api/album');
 
 // const SongRepository = require('./internal/domain/SongRepository');
-const AlbumRepository = require('./internal/domain/AlbumRepository');
+const AlbumService = require('./internal/service/AlbumService');
 
 const validator = require('./internal/pkg/validator');
 
 const config = require('./internal/config/config');
 
 const init = async () => {
-  const AlbumService = new AlbumRepository();
+  const AlbumSvc = new AlbumService();
 
   const server = Hapi.server({
     port: config.port,
@@ -34,7 +34,7 @@ const init = async () => {
     {
       plugin: AlbumApi,
       options: {
-        service: AlbumService,
+        service: AlbumSvc,
         validator: validator.AlbumValidator,
       },
     },
