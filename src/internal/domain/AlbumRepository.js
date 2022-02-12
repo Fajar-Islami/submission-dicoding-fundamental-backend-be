@@ -34,18 +34,24 @@ class AlbumRepository {
   }
 
   async getAlbumBydId(id) {
-    const query = {
-      text: `SELECT * FROM ${tableName} WHERE id =$1`,
+    const queryGetAlbum = {
+      text: `SELECT id,name,year FROM ${tableName} WHERE id =$1`,
+      values: [id],
+    };
+    const queryGetSongs = {
+      text: 'SELECT id,title,performer FROM songs WHERE album_id =$1',
       values: [id],
     };
 
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
+    const result1 = await this._pool.query(queryGetAlbum);
+    if (!result1.rows.length) {
       throw new NotFoundError('Album tidak ditemukan');
     }
+    const result2 = await this._pool.query(queryGetSongs);
 
-    return result.rows[0];
+    result1.rows[0].songs = result2.rows;
+
+    return result1.rows[0];
   }
 
   async editAlbumById(id, { name, year }) {

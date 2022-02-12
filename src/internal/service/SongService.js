@@ -7,8 +7,8 @@ class SongService {
     return this._repository.addSong(payload);
   }
 
-  async getAllSong() {
-    return this._repository.getAllSong();
+  async getAllSong(query) {
+    return this._repository.getAllSong(query);
   }
 
   async getSongBydId(id) {

@@ -41,10 +41,33 @@ class SongRepository {
     return result.rows[0].id;
   }
 
-  async getAllSong() {
-    const result = await this._pool.query(
-      `SELECT id,title,performer FROM ${tableName}`,
-    );
+  async getAllSong(query) {
+    const { title, performer } = query;
+    let q = {};
+
+    if (title && performer) {
+      q = {
+        text: `SELECT id,title,performer FROM ${tableName} WHERE title ILIKE $1 AND performer ILIKE $2`,
+        values: [`%${title}%`, `%${performer}%`],
+      };
+    } else if (title) {
+      q = {
+        text: `SELECT id,title,performer FROM ${tableName} WHERE title ILIKE $1`,
+        values: [`%${title}%`],
+      };
+    } else if (performer) {
+      q = {
+        text: `SELECT id,title,performer FROM ${tableName} WHERE performer ILIKE $1`,
+        values: [`%${performer}%`],
+      };
+    } else {
+      q = {
+        text: `SELECT id,title,performer FROM ${tableName}`,
+        values: [],
+      };
+    }
+
+    const result = await this._pool.query(q);
     return result.rows;
   }
 
@@ -59,10 +82,6 @@ class SongRepository {
     if (!result.rows.length) {
       throw new NotFoundError('Song tidak ditemukan');
     }
-
-    const fixResult = { ...result.rows[0] };
-
-    console.log(fixResult);
 
     return result.rows[0];
   }
