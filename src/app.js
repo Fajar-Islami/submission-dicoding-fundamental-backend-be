@@ -1,31 +1,14 @@
 const Hapi = require('@hapi/hapi');
-const { Pool } = require('pg');
 
 const SongApi = require('./api/song');
 const AlbumApi = require('./api/album');
 
-const AlbumRepository = require('./internal/domain/AlbumRepository');
-const AlbumService = require('./internal/service/AlbumService');
-
-const SongRepository = require('./internal/domain/SongRepository');
-const SongService = require('./internal/service/SongService');
-
 const Validator = require('./internal/pkg/validator');
 
 const CONFIG = require('./internal/config/config');
+const { DBCONFIG } = require('./internal/infrastructure/postgre');
 
 const init = async () => {
-  const DBPOOL = new Pool({
-    max: CONFIG.PGMAXPOOL || 10,
-    min: CONFIG.PGMINPOOL || 2,
-  });
-
-  const AlbumRepo = new AlbumRepository(DBPOOL);
-  const AlbumSvc = new AlbumService(AlbumRepo);
-
-  const SongRepo = new SongRepository(DBPOOL);
-  const SongSvc = new SongService(SongRepo);
-
   const server = Hapi.server({
     port: CONFIG.PORT || 5000,
     host: CONFIG.HOST || 'localhost',
@@ -40,14 +23,14 @@ const init = async () => {
     {
       plugin: AlbumApi,
       options: {
-        service: AlbumSvc,
+        dbConfig: DBCONFIG,
         validator: Validator.validateAlbumPayload,
       },
     },
     {
       plugin: SongApi,
       options: {
-        service: SongSvc,
+        dbConfig: DBCONFIG,
         validator: Validator.validateSongPayload,
       },
     },
