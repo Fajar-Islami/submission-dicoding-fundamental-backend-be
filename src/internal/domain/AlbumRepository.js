@@ -1,15 +1,12 @@
-const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../pkg/error/InvariantError');
 const NotFoundError = require('../pkg/error/NotFoundError');
 
-const { mapAlbumDBToModel } = require('../helper/common');
-
 const tableName = 'albums';
 
 class AlbumRepository {
-  constructor() {
-    this._pool = new Pool();
+  constructor(pool) {
+    this._pool = pool;
   }
 
   async addAlbum({ name, year }) {
@@ -32,8 +29,8 @@ class AlbumRepository {
   }
 
   async getAllAlbum() {
-    const result = await this._pool.query(`SELECT * FROM ${tableName}`);
-    return result.rows.map(mapAlbumDBToModel);
+    const result = this._pool.query(`SELECT id,name,year FROM ${tableName}`);
+    return result.rows;
   }
 
   async getAlbumBydId(id) {
@@ -48,7 +45,7 @@ class AlbumRepository {
       throw new NotFoundError('Album tidak ditemukan');
     }
 
-    return result.rows.map(mapAlbumDBToModel)[0];
+    return result.rows[0];
   }
 
   async editAlbumById(id, { name, year }) {

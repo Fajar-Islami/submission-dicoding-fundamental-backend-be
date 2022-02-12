@@ -1,7 +1,8 @@
-const port = process.env.PORT;
-const host = process.env.HOST;
-
-module.exports = {
-  port,
-  host,
+const CONFIG = {
+  PORT: process.env.PORT,
+  HOST: process.env.HOST,
+  PGMAXPOOL: process.env.PGMAXPOOL,
+  PGMINPOOL: process.env.PGMINPOOL,
 };
+
+module.exports = CONFIG;

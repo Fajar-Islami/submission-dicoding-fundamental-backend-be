@@ -1,21 +1,34 @@
 const Hapi = require('@hapi/hapi');
+const { Pool } = require('pg');
 
-// const SongApi = require('./api/song');
+const SongApi = require('./api/song');
 const AlbumApi = require('./api/album');
 
-// const SongRepository = require('./internal/domain/SongRepository');
+const AlbumRepository = require('./internal/domain/AlbumRepository');
 const AlbumService = require('./internal/service/AlbumService');
 
-const validator = require('./internal/pkg/validator');
+const SongRepository = require('./internal/domain/SongRepository');
+const SongService = require('./internal/service/SongService');
 
-const config = require('./internal/config/config');
+const Validator = require('./internal/pkg/validator');
+
+const CONFIG = require('./internal/config/config');
 
 const init = async () => {
-  const AlbumSvc = new AlbumService();
+  const DBPOOL = new Pool({
+    max: CONFIG.PGMAXPOOL || 10,
+    min: CONFIG.PGMINPOOL || 2,
+  });
+
+  const AlbumRepo = new AlbumRepository(DBPOOL);
+  const AlbumSvc = new AlbumService(AlbumRepo);
+
+  const SongRepo = new SongRepository(DBPOOL);
+  const SongSvc = new SongService(SongRepo);
 
   const server = Hapi.server({
-    port: config.port,
-    host: config.host,
+    port: CONFIG.PORT || 5000,
+    host: CONFIG.HOST || 'localhost',
     routes: {
       cors: {
         origin: ['*'],
@@ -24,18 +37,18 @@ const init = async () => {
   });
 
   await server.register([
-    // {
-    //   plugin: SongApi,
-    //   options: {
-    //     service: SongRepository,
-    //     validator: SongValidator,
-    //   },
-    // },
     {
       plugin: AlbumApi,
       options: {
         service: AlbumSvc,
-        validator: validator.AlbumValidator,
+        validator: Validator.validateAlbumPayload,
+      },
+    },
+    {
+      plugin: SongApi,
+      options: {
+        service: SongSvc,
+        validator: Validator.validateSongPayload,
       },
     },
   ]);

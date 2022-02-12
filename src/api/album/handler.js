@@ -15,7 +15,7 @@ class AlbumHandler {
 
   async postAlbumHandler(request, h) {
     try {
-      this._validator.validateAlbumPayload(request.payload);
+      this._validator(request.payload);
       const { name = 'default', year = 0 } = request.payload;
 
       const albumId = await this._service.addAlbum({ name, year });
@@ -72,7 +72,7 @@ class AlbumHandler {
 
   async updateAlbumHandler(request, h) {
     try {
-      this._validator.validateAlbumPayload(request.payload);
+      this._validator(request.payload);
       const { id } = request.params;
       await this._service.getAlbumBydId(id);
 

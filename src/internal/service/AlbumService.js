@@ -1,8 +1,6 @@
-const AlbumRepository = require('../domain/AlbumRepository');
-
 class AlbumService {
-  constructor() {
-    this._repository = new AlbumRepository();
+  constructor(repository) {
+    this._repository = repository;
   }
 
   async addAlbum({ name, year }) {
