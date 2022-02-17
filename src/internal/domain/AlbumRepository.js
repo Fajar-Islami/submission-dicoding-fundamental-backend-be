@@ -12,11 +12,10 @@ class AlbumRepository {
   async addAlbum({ name, year }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
 
     const query = {
       text: `INSERT INTO ${tableName} VALUES($1,$2,$3,$4,$5) RETURNING id`,
-      values: [id, name, year, createdAt, updatedAt],
+      values: [id, name, year, createdAt, createdAt],
     };
 
     const result = await this._pool.query(query);
@@ -29,8 +28,8 @@ class AlbumRepository {
   }
 
   async getAllAlbum() {
-    const result = this._pool.query(`SELECT id,name,year FROM ${tableName}`);
-    return result.rows;
+    const { rows } = this._pool.query(`SELECT id,name,year FROM ${tableName}`);
+    return rows;
   }
 
   async getAlbumBydId(id) {
@@ -63,7 +62,7 @@ class AlbumRepository {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (result.rowCount < 1) {
       throw new NotFoundError('Album tidak ditemukan');
     }
   }
