@@ -1,6 +1,5 @@
 const { nanoid } = require('nanoid');
-const InvariantError = require('../pkg/error/InvariantError');
-const NotFoundError = require('../pkg/error/NotFoundError');
+const { InvariantError, NotFoundError } = require('../pkg/error');
 
 const tableName = 'songs';
 

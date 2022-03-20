@@ -5,7 +5,7 @@ const os = require('os');
 const process = require('process');
 const app = require('./app');
 
-if (cluster.isPrimary) {
+if (cluster.isMaster) {
   const numWorkers = os.cpus().length;
 
   console.log(`Master cluster setting up ${numWorkers} workers...`);
