@@ -1,11 +1,11 @@
 const POST = 'POST';
 const GET = 'GET';
-const UPDATE = 'PUT';
+const PUT = 'PUT';
 const DELETE = 'DELETE';
 
 module.exports = {
   POST,
   GET,
-  UPDATE,
+  PUT,
   DELETE,
 };

@@ -5,8 +5,10 @@ const laabr = require('laabr');
 const SongApi = require('./api/song');
 const AlbumApi = require('./api/album');
 const UsersApi = require('./api/users');
+const AuthApi = require('./api/authentications');
 
 const Validator = require('./internal/pkg/validator');
+const tokenManager = require('./internal/helper/tokenManager');
 
 const CONFIG = require('./internal/config/config');
 const { DBCONFIG } = require('./internal/infrastructure/postgre');
@@ -60,6 +62,14 @@ const init = async () => {
       options: {
         dbConfig: DBCONFIG,
         validator: Validator.validateUsersPayload,
+      },
+    },
+    {
+      plugin: AuthApi,
+      options: {
+        dbConfig: DBCONFIG,
+        validator: Validator,
+        tokenManager,
       },
     },
   ]);

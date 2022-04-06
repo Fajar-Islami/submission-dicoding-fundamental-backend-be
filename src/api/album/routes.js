@@ -17,7 +17,7 @@ const routes = (handler) => [
     handler: handler.getAlbumByIdHandler,
   },
   {
-    method: method.UPDATE,
+    method: method.PUT,
     path: '/albums/{id}',
     handler: handler.updateAlbumHandler,
   },
