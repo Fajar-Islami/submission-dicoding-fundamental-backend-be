@@ -7,9 +7,13 @@ const {
   PuthAuthenticationPayloadSchema,
   DeleteAuthenticationPayloadSchema,
 } = require('./AuthenticationValidatorSchema');
+const {
+  CreatePlaylistPayloadSchema,
+  AddSongToPlaylist,
+} = require('./PlaylistValidatorSchema');
 
 const Validator = {
-  //
+  // Album
   validateAlbumPayload: (payload) => {
     const validationResult = AlbumPayloadSchema.validate(payload);
     if (validationResult.error) {
@@ -17,7 +21,7 @@ const Validator = {
     }
   },
 
-  //
+  // Song
   validateSongPayload: (payload) => {
     const validationResult = SongPayloadSchema.validate(payload);
     if (validationResult.error) {
@@ -25,7 +29,7 @@ const Validator = {
     }
   },
 
-  //
+  // Users
   validateUsersPayload: (payload) => {
     const validationResult = UsersPayloadSchema.validate(payload);
 
@@ -34,7 +38,7 @@ const Validator = {
     }
   },
 
-  //
+  // Authentication
   validatePostAuthenticationPayload: (payload) => {
     const validationResult = PostAuthenticationPayloadScehma.validate(payload);
 
@@ -54,6 +58,23 @@ const Validator = {
   validateDeleteAuthenticationPayload: (payload) => {
     const validationResult =
       DeleteAuthenticationPayloadSchema.validate(payload);
+
+    if (validationResult.error) {
+      throw new InvariantError(validationResult.error.message);
+    }
+  },
+
+  // Playlist
+  validateCreatePlaylistPayload: (payload) => {
+    const validationResult = CreatePlaylistPayloadSchema.validate(payload);
+
+    if (validationResult.error) {
+      throw new InvariantError(validationResult.error.message);
+    }
+  },
+
+  validateAddSongToPlaylistPayload: (payload) => {
+    const validationResult = AddSongToPlaylist.validate(payload);
 
     if (validationResult.error) {
       throw new InvariantError(validationResult.error.message);
