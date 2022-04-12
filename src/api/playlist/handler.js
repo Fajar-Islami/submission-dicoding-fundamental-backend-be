@@ -1,6 +1,7 @@
 class PlaylistHandler {
   constructor(service, createPlaylistValidator, addSongToPlaylistValidator) {
     this._service = service;
+
     this._createPlaylistValidator = createPlaylistValidator;
     this._addSongToPlaylistValidator = addSongToPlaylistValidator;
 
@@ -11,7 +12,7 @@ class PlaylistHandler {
 
   async createPlaylistHandler(request, h) {
     const { payload } = request;
-    const { id: owner } = request.auth.creadentials;
+    const { id: owner } = request.auth.credentials;
 
     this._createPlaylistValidator(payload);
 
@@ -33,12 +34,12 @@ class PlaylistHandler {
 
   async getUserPlaylistHandler(request) {
     const { id: ownerId } = request.auth.credentials;
-    const playlist = await this._service.getUserPlaylist(ownerId);
+    const playlists = await this._service.getUserPlaylist(ownerId);
 
     return {
       status: 'success',
       data: {
-        playlist,
+        playlists,
       },
     };
   }

@@ -12,8 +12,8 @@ module.exports = {
     const PlaylistSvc = new PlaylistService(PlaylistRepo);
     const playlistHandler = new PlaylistHandler(
       PlaylistSvc,
-      validator.CreatePlaylistPayloadSchema,
-      validator.AddSongToPlaylist,
+      validator.validateCreatePlaylistPayload,
+      validator.validateAddSongToPlaylistPayload,
     );
 
     server.route(routes(playlistHandler));

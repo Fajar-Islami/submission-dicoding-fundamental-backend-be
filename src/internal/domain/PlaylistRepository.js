@@ -6,6 +6,7 @@ const {
 } = require('../pkg/error');
 
 const tableName = 'playlists';
+const tableName2 = 'users';
 
 class PlaylistRepository {
   constructor(pool) {
@@ -13,13 +14,11 @@ class PlaylistRepository {
   }
 
   async addPlaylist({ name, owner }) {
-    const id = `playlist-${nanoid}`;
-    const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
+    const id = `playlist-${nanoid(16)}`;
 
     const query = {
-      text: `INSERT INTO ${tableName} VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-      valus: [id, name, owner, createdAt, updatedAt],
+      text: `INSERT INTO ${tableName} VALUES($1,$2,$3) RETURNING id`,
+      values: [id, name, owner],
     };
 
     const result = await this._pool.query(query);
@@ -33,7 +32,7 @@ class PlaylistRepository {
 
   async getPlaylist(owner) {
     const query = {
-      text: `SELECT id,name,owner from ${tableName} WHERE owner = $1`,
+      text: `SELECT a.id,a.name,b.username from ${tableName} a inner join ${tableName2} b on a.owner = b.id  WHERE b.id = $1`,
       values: [owner],
     };
 
@@ -58,7 +57,7 @@ class PlaylistRepository {
   async verifyPlaylistOwner(id, owner) {
     const query = {
       text: `SELECT * FROM ${tableName}  WHERE id = $1`,
-      values: [id, owner],
+      values: [id],
     };
 
     const { rows } = await this._pool.query(query);
