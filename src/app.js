@@ -6,6 +6,7 @@ const SongApi = require('./api/song');
 const AlbumApi = require('./api/album');
 const UsersApi = require('./api/users');
 const AuthApi = require('./api/authentications');
+const PlaylistApi = require('./api/playlist');
 
 const Validator = require('./internal/pkg/validator');
 const tokenManager = require('./internal/helper/tokenManager');
@@ -42,6 +43,24 @@ const init = async () => {
     },
   ]);
 
+  // mendefinisikan strategi autentikasi jwt
+  server.auth.strategy('openmusic_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
+
+  // Plugin untuk route
   await server.register([
     {
       plugin: AlbumApi,
@@ -70,6 +89,13 @@ const init = async () => {
         dbConfig: DBCONFIG,
         validator: Validator,
         tokenManager,
+      },
+    },
+    {
+      plugin: PlaylistApi,
+      options: {
+        dbConfig: DBCONFIG,
+        validator: Validator,
       },
     },
   ]);
