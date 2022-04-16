@@ -9,10 +9,8 @@ class SongRepository {
   }
 
   async addSong(payload) {
-    const {
-      title, year, genre, performer, duration, albumId,
-    } = payload;
-    const id = nanoid(16);
+    const { title, year, genre, performer, duration, albumId } = payload;
+    const id = `song-${nanoid(16)}`;
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
@@ -86,9 +84,7 @@ class SongRepository {
   }
 
   async editSongById(id, payload) {
-    const {
-      title, year, genre, performer, duration, albumId,
-    } = payload;
+    const { title, year, genre, performer, duration, albumId } = payload;
     const updateAt = new Date().toISOString();
     const query = {
       text: `UPDATE ${tableName} SET TITLE = $1, YEAR = $2, GENRE=$3, PERFORMER=$4, DURATION=$5, ALBUM_ID=$6, updated_at = $7 WHERE id = $8 RETURNING id`,
